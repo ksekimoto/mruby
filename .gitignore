@@ -25,3 +25,6 @@ tags
 /mruby-source-*.gem
 doc/api
 .yardoc
+/.project
+/.cproject
+/.settings
