@@ -41,10 +41,15 @@
 /* you might need to specify --falign-functions=n (where n>1) */
 //#define MRB_METHOD_TABLE_INLINE
 
-/* add -DMRB_INT16 to use 16bit integer for mrb_int; conflict with MRB_INT64 */
+/* add -DMRB_INT16 to use 16bit integer for mrb_int; conflict with MRB_INT32 and MRB_INT64 */
 //#define MRB_INT16
 
-/* add -DMRB_INT64 to use 64bit integer for mrb_int; conflict with MRB_INT16 */
+/* add -DMRB_INT32 to use 32bit integer for mrb_int; conflict with MRB_INT16 and MRB_INT64;
+   Default for 32-bit CPU mode. */
+//#define MRB_INT32
+
+/* add -DMRB_INT64 to use 64bit integer for mrb_int; conflict with MRB_INT16 and MRB_INT32;
+   Default for 64-bit CPU mode. */
 //#define MRB_INT64
 
 /* if no specific integer type is chosen */
@@ -58,11 +63,16 @@
 # endif
 #endif
 
+/* define on big endian machines; used by MRB_NAN_BOXING, etc. */
+#ifndef MRB_ENDIAN_BIG
+# if (defined(BYTE_ORDER) && defined(BIG_ENDIAN) && BYTE_ORDER == BIG_ENDIAN) || \
+     (defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#  define MRB_ENDIAN_BIG
+# endif
+#endif
+
 /* represent mrb_value in boxed double; conflict with MRB_USE_FLOAT and MRB_WITHOUT_FLOAT */
 //#define MRB_NAN_BOXING
-
-/* define on big endian machines; used by MRB_NAN_BOXING */
-//#define MRB_ENDIAN_BIG
 
 /* represent mrb_value as a word (natural unit of data for the processor) */
 //#define MRB_WORD_BOXING
@@ -82,6 +92,11 @@
 /* do not use __init_array_start to determine readonly data section;
    effective only when MRB_USE_ETEXT_EDATA is defined */
 //#define MRB_NO_INIT_ARRAY_START
+
+/* if do not works both MRB_USE_ETEXT_EDATA and MRB_NO_INIT_ARRAY_START,
+   you can try mrb_ro_data_p() that you have implemented yourself in any file;
+   prototype is `mrb_bool mrb_ro_data_p(const char *ptr)` */
+//#define MRB_USE_CUSTOM_RO_DATA_P
 
 /* turn off generational GC by default */
 //#define MRB_GC_TURN_OFF_GENERATIONAL
@@ -115,6 +130,7 @@
 
 /* -DMRB_ENABLE_XXXX to enable following features */
 //#define MRB_ENABLE_DEBUG_HOOK /* hooks for debugger */
+//#define MRB_ENABLE_ALL_SYMBOLS /* Symbols.all_symbols */
 
 /* end of configuration */
 
